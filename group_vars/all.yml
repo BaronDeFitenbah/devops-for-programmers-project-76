@@ -1,0 +1,4 @@
+redmine_port: 3000
+redmine_db_name: redmine
+redmine_db_user: redmine
+redmine_db_password: "your_secure_password"

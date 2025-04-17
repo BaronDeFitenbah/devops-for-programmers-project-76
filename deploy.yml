@@ -1,0 +1,30 @@
+---
+- hosts: webservers
+  become: yes
+  vars_files:
+    - group_vars/all.yml
+  tasks:
+    - name: Generate secret key
+      command: openssl rand -hex 32
+      register: secret_key_gen
+      changed_when: false
+
+    - name: Create env file
+      template:
+        src: templates/redmine.env.j2
+        dest: /opt/redmine/redmine.env
+      vars:
+        db_host: "{{ groups['dbservers'][0] }}"
+        secret_key: "{{ secret_key_gen.stdout }}"
+
+    - name: Ensure Redmine container is running
+      docker_container:
+        name: redmine
+        image: redmine:latest
+        state: started
+        restart: yes
+        ports:
+          - "{{ redmine_port }}:3000"
+        env_file: /opt/redmine/redmine.env
+        volumes:
+          - /opt/redmine/files:/usr/src/redmine/files
