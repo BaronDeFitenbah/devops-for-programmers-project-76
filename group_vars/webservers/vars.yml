@@ -4,3 +4,4 @@ redmine_db_name: "redmine"
 redmine_db_user: "redmine"
 redmine_db_password: "{{ vault_db_password }}"
 secret_key: "{{ vault_secret_key }}"
+vault_db_password: 12345678
