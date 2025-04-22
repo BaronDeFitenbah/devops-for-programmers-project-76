@@ -1,0 +1,6 @@
+db_host: "your-db-host.yandexcloud.net"
+db_port: 5432
+redmine_db_name: "redmine"
+redmine_db_user: "redmine"
+redmine_db_password: "{{ vault_db_password }}"
+secret_key: "{{ vault_secret_key }}"

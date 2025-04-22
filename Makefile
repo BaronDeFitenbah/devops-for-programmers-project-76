@@ -8,3 +8,11 @@ deploy:
 
 check-status:
 	ansible webservers -i inventory.ini -a "docker ps -f name=redmine"
+
+check-db:
+	ansible webservers -i inventory.ini -m postgresql_query \
+	  -a "login_host={{ db_hosts[0] }} \
+	      login_user={{ db_user }} \
+	      ssl_mode=verify-full \
+	      query='SELECT version()'" \
+	  --vault-password-file $(VAULT_PASS)

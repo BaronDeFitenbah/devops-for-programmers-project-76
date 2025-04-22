@@ -2,3 +2,12 @@ redmine_port: 3000
 redmine_db_name: redmine
 redmine_db_user: redmine
 redmine_db_password: "your_secure_password"
+
+# Настройки БД
+db_cluster_id: "c9qeboucj8jimhgm5cgi"
+db_hosts:
+  - "rc1a-6zdnfkxk50r41hy5.mdb.yandexcloud.net"
+  - "rc1d-af9ropjqc9xjiab9.mdb.yandexcloud.net"
+db_port: 6432
+db_name: "redmine_production"
+db_user: "redmine_admin"
