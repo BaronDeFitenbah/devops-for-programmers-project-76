@@ -11,3 +11,4 @@ db_hosts:
 db_port: 6432
 db_name: "redmine_production"
 db_user: "redmine_admin"
+vault_db_password: 12345678
