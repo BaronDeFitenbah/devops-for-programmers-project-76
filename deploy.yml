@@ -1,5 +1,14 @@
 ---
 - hosts: webservers
+  roles:
+    - role: datadog.datadog
+      vars:
+        datadog_api_key: "{{ vault_datadog_api_key }}"
+        datadog_site: "{{ vault_datadog_site }}"
+        datadog_config: "{{ datadog_config | to_json }}"
+      tags: monitoring
+
+- hosts: webservers
   become: yes
   vars_files:
     - group_vars/all.yml
@@ -51,6 +60,14 @@
       set_fact:
         secret_key: "{{ vault_secret_key | default(generated_secret.stdout) }}"
         
+    - name: Ensure Redmine directory exists
+      file:
+        path: /opt/redmine
+        state: directory
+        mode: '0755'
+        owner: root
+        group: root
+        
     - name: Create Redmine environment file
       template:
         src: templates/redmine.env.j2
@@ -66,21 +83,14 @@
           password={{ vault_db_password }}
           target_session_attrs=read-write
 
-    - name: Ensure Redmine directory exists
-      file:
-        path: /opt/redmine
-        state: directory
-        mode: '0755'
-        owner: root
-        group: root
 
-    # - name: Deploy Redmine container
-    #   docker_container:
-    #     name: redmine
-    #     image: redmine:latest
-    #     state: started
-    #     restart_policy: unless-stopped
-    #     env_file: /opt/redmine/redmine.env
-    #     volumes:
-    #       - /opt/redmine/files:/usr/src/redmine/files
-    #       - /root/.postgresql:/usr/src/redmine/.postgresql:ro
+    - name: Deploy Redmine container
+      docker_container:
+        name: redmine
+        image: redmine:latest
+        state: started
+        restart_policy: unless-stopped
+        env_file: /opt/redmine/redmine.env
+        volumes:
+          - /opt/redmine/files:/usr/src/redmine/files
+          - /root/.postgresql:/usr/src/redmine/.postgresql:ro
