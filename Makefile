@@ -19,5 +19,5 @@ check-db:
 
 code-setup:
     cd code && \
-    ansible-galaxy collection install -r requirements.yml --force-with-deps && \
+    ansible-galaxy collection install -r requirements.yml --force --pre && \
     ansible-galaxy role install -r requirements.yml
