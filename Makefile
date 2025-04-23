@@ -19,5 +19,7 @@ check-db:
 
 code-setup:
     cd code && \
-    ansible-galaxy collection install -r requirements.yml --force --pre && \
+    ansible-galaxy collection install community.postgresql:3.0.0 && \
+    ansible-galaxy collection install community.docker:3.0.2 && \
+    ansible-galaxy collection install git+https://github.com/DataDog/ansible-datadog.git,4.12.0 --force
     ansible-galaxy role install -r requirements.yml
