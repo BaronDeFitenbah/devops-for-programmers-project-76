@@ -16,3 +16,8 @@ check-db:
 	      ssl_mode=verify-full \
 	      query='SELECT version()'" \
 	  --vault-password-file $(VAULT_PASS)
+
+code-setup:
+    cd code && \
+    ansible-galaxy collection install -r requirements.yml --force-with-deps && \
+    ansible-galaxy role install -r requirements.yml
