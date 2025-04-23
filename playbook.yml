@@ -51,7 +51,7 @@
     - name: Set fact for secret key
       ansible.builtin.set_fact:
         secret_key: "{{ vault_secret_key | default(generated_secret.stdout) }}"
-        
+
     - name: Ensure Redmine directory exists
       ansible.builtin.file:
         path: /opt/redmine
@@ -59,7 +59,7 @@
         mode: '0755'
         owner: root
         group: root
-        
+
     - name: Create Redmine environment file
       ansible.builtin.template:
         src: templates/redmine.env.j2
