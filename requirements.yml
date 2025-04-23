@@ -1,13 +1,13 @@
 ---
 collections:
   - name: community.postgresql
-    version: 3.0.0  # Используем последнюю стабильную версию
+    version: 3.0.0
   
   - name: community.docker
     version: 3.0.2
   
   - name: datadog.datadog
-    version: 4.10.0
+    version: 4.12.0  # Используем последнюю стабильную версию
 
 roles:
   - name: geerlingguy.docker
