@@ -1,21 +1,22 @@
 ---
-- hosts: webservers
-  become: yes
+- name: Configure Redmine deployment
+  hosts: webservers
+  become: true
   vars_files:
     - group_vars/all.yml
     - group_vars/webservers/vault.yml
 
   tasks:
     - name: Install PostgreSQL client and dependencies
-      apt:
-        name: install
+      ansible.builtin.apt:
+        name:
           - postgresql-client
           - python3-psycopg2
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Create .postgresql directory for current user
-      file:
+      ansible.builtin.file:
         path: "~/.postgresql"
         state: directory
         mode: '0700'
@@ -28,31 +29,31 @@
 
     - name: Verify database connection
       community.postgresql.postgresql_query:
-        db: "redmine_production"  # Явно указываем базу данных
+        db: "redmine_production"
         login_host: "{{ db_hosts[0] }}"
         login_port: "{{ db_port }}"
         login_user: "{{ db_user }}"
         login_password: "{{ vault_db_password }}"
         ssl_mode: "verify-full"
         ca_cert: "/root/.postgresql/root.crt"
-        query: "SELECT 1"  # Простой тестовый запрос
+        query: "SELECT 1"
       register: db_check
       changed_when: false
-      ignore_errors: yes  # Продолжать выполнение даже при ошибке
+      ignore_errors: true
 
     - name: Generate secret key if not defined
-      command: openssl rand -hex 32
+      ansible.builtin.command: openssl rand -hex 32
       register: generated_secret
       changed_when: false
       when: vault_secret_key is not defined
       no_log: true
 
     - name: Set fact for secret key
-      set_fact:
+      ansible.builtin.set_fact:
         secret_key: "{{ vault_secret_key | default(generated_secret.stdout) }}"
         
     - name: Ensure Redmine directory exists
-      file:
+      ansible.builtin.file:
         path: /opt/redmine
         state: directory
         mode: '0755'
@@ -60,13 +61,13 @@
         group: root
         
     - name: Create Redmine environment file
-      template:
+      ansible.builtin.template:
         src: templates/redmine.env.j2
         dest: /opt/redmine/redmine.env
-        mode: 0600
+        mode: '0600'
       vars:
         db_connection_string: |
-          host={{ db_hosts|join(',') }} 
+          host={{ db_hosts | join(',') }}
           port={{ db_port }}
           sslmode=verify-full
           dbname={{ db_name }}
@@ -74,9 +75,8 @@
           password={{ vault_db_password }}
           target_session_attrs=read-write
 
-
     - name: Deploy Redmine container
-      docker_container:
+      community.docker.docker_container:
         name: redmine
         image: redmine:latest
         state: started
